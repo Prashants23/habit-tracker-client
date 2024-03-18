@@ -38,7 +38,6 @@ export default function Dashboard() {
   // const { mutate: tasksData,  } = useCreateTaskMutation();
   const { data: taskData, refetch: refetchTask } = useGetTasks({
     id: selectedGoalId,
-    enabled: false,
   });
   const { mutate: createGoalMutate } = useCreateGoalMutation({
     onSuccess: () => {

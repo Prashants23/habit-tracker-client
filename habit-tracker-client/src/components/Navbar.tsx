@@ -2,8 +2,10 @@
 
 import { useRouter } from "next/router";
 import React from "react";
+import { useQueryClient } from "react-query";
 
 export default function Navbar() {
+  const queryClient = useQueryClient();
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -12,6 +14,7 @@ export default function Navbar() {
 
     // Redirect to login page
     router.push("/login");
+    queryClient.clear();
   };
 
   return (

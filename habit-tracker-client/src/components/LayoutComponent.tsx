@@ -1,19 +1,21 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import useLocalStorage from "@/hooks/useLocalStorage";
 
 const Layout = ({ children }) => {
   const router = useRouter();
-
+  const [accessTokenData, _] = useLocalStorage(
+    "@accessToken",
+    {} as { accessToken: string }
+  );
   useEffect(() => {
-    // Check if accessToken exists in localStorage
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = accessTokenData.accessToken;
 
     if (!accessToken) {
       // Redirect to the login page if not authenticated
       router.push("/login");
     } else {
-      // Redirect to the authenticated flow
-      router.push("/home"); // Replace "/authenticated-route" with your authenticated route
+      router.push("/home");
     }
   }, []);
 

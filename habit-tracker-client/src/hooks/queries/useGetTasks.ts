@@ -13,6 +13,7 @@ export const useGetTasks = (id: any, options?: UseQueryOptions) =>
     refetchOnWindowFocus: true,
     cacheTime: 1000 * 60 * 60,
     staleTime: 1000 * 60 * 60,
+
     retry: (failureCount, error) => {
       if (failureCount < 3 && error?.response?.status >= 500) return true; // retry on 5xx errors for 3 times
     },

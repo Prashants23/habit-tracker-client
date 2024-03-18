@@ -1,5 +1,3 @@
-// components/GoalModal.js
-
 import { useCreateGoalMutation } from "@/hooks/mutations/useCreateGoalMutation";
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
@@ -17,17 +15,46 @@ export default function GoalModal({
   const [minDate, setMinDate] = useState<Date>(new Date());
   const [maxDate, setMaxDate] = useState<Date>(new Date());
 
-  const handleSave = () => {
-    const payload = {
-      goalName,
-      minTimeline: minDate,
-      maxTimeline: maxDate,
-      completed: false,
-    };
+  const [goalNameError, setGoalNameError] = useState("");
+  const [minDateError, setMinDateError] = useState("");
+  const [maxDateError, setMaxDateError] = useState("");
 
-    onCreateTask(payload);
-    // Handle saving of goal with selected minDate and maxDate
-    onClose();
+  const handleSave = () => {
+    let isValid = true;
+
+    if (!goalName) {
+      setGoalNameError("Goal name is required");
+      isValid = false;
+    } else {
+      setGoalNameError("");
+    }
+
+    if (!minDate) {
+      setMinDateError("Minimum timeline is required");
+      isValid = false;
+    } else {
+      setMinDateError("");
+    }
+
+    if (!maxDate) {
+      setMaxDateError("Maximum timeline is required");
+      isValid = false;
+    } else {
+      setMaxDateError("");
+    }
+
+    if (isValid) {
+      const payload = {
+        goalName,
+        minTimeline: minDate,
+        maxTimeline: maxDate,
+        completed: false,
+      };
+
+      onCreateTask(payload);
+      // Handle saving of goal with selected minDate and maxDate
+      onClose();
+    }
   };
 
   return (
@@ -53,9 +80,14 @@ export default function GoalModal({
                 type="text"
                 id="goalName"
                 onChange={(event) => setGoalName(event.target.value)}
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                  goalNameError && "border-red-500"
+                }`}
                 placeholder="Enter goal name"
               />
+              {goalNameError && (
+                <p className="text-red-500 text-xs italic">{goalNameError}</p>
+              )}
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
@@ -73,8 +105,13 @@ export default function GoalModal({
                   endDate={maxDate}
                   minDate={new Date()}
                   maxDate={minDate}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                    minDateError && "border-red-500"
+                  }`}
                 />
+                {minDateError && (
+                  <p className="text-red-500 text-xs italic">{minDateError}</p>
+                )}
               </div>
               <div>
                 <label
@@ -90,8 +127,13 @@ export default function GoalModal({
                   startDate={minDate}
                   endDate={maxDate}
                   minDate={minDate}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                    maxDateError && "border-red-500"
+                  }`}
                 />
+                {maxDateError && (
+                  <p className="text-red-500 text-xs italic">{maxDateError}</p>
+                )}
               </div>
             </div>
             <div className="flex justify-end">

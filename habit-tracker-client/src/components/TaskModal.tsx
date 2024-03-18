@@ -31,7 +31,7 @@ const TaskModal: React.FC<TaskModalProps> = ({
   onSave,
   task,
 }) => {
-  const [taskName, setTaskName] = useState(task ? task.name : "");
+  const [taskName, setTaskName] = useState(task ? task.taskName : "");
   const [quantity, setQuantity] = useState(task ? task.quantity : "");
   const [frequency, setFrequency] = useState(task ? task.frequency : "");
   const [selectedDaysOfWeek, setSelectedDaysOfWeek] = useState<string[]>(
@@ -44,22 +44,55 @@ const TaskModal: React.FC<TaskModalProps> = ({
     task ? task.reminderTime : new Date()
   );
 
+  const [taskNameError, setTaskNameError] = useState("");
+  const [quantityError, setQuantityError] = useState("");
+  const [frequencyError, setFrequencyError] = useState("");
+
+  const validateForm = () => {
+    let isValid = true;
+
+    if (!taskName) {
+      setTaskNameError("Task name is required");
+      isValid = false;
+    } else {
+      setTaskNameError("");
+    }
+
+    if (!quantity) {
+      setQuantityError("Quantity is required");
+      isValid = false;
+    } else {
+      setQuantityError("");
+    }
+
+    if (!frequency) {
+      setFrequencyError("Frequency is required");
+      isValid = false;
+    } else {
+      setFrequencyError("");
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTask: Task = {
-      taskName,
-      quantity,
-      frequency,
-      selectedDaysOfWeek,
-      reminders,
-      reminderTime,
-    };
-    onSave(newTask);
-    setTaskName("");
-    setQuantity("");
-    setFrequency("");
-    onClose();
-    setSelectedDaysOfWeek([]);
+    if (validateForm()) {
+      const newTask: Task = {
+        taskName,
+        quantity,
+        frequency,
+        selectedDaysOfWeek,
+        reminders,
+        reminderTime,
+      };
+      onSave(newTask);
+      setTaskName("");
+      setQuantity("");
+      setFrequency("");
+      onClose();
+      setSelectedDaysOfWeek([]);
+    }
   };
 
   return (
@@ -69,15 +102,15 @@ const TaskModal: React.FC<TaskModalProps> = ({
       } overflow-y-auto z-50 flex justify-center items-center`}
     >
       <div className="fixed inset-0 bg-black opacity-50"></div>
-      <div className="bg-white rounded-lg overflow-visible shadow-xl transform transition-all max-w-lg w-full mx-4">
+      <div className=" rounded-sm dark:bg-gray-800 dark:border-gray-700rounded-lg overflow-visible shadow-xl transform transition-all max-w-lg w-full mx-4">
         <div className="p-4">
-          <h2 className="text-lg font-bold mb-4 text-black">
+          <h2 className="text-lg font-bold mb-4 text-gray-100">
             {task ? "Edit Task" : "Create Task"}
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block text-gray-200 text-sm font-bold mb-2"
                 htmlFor="taskName"
               >
                 Task Name
@@ -85,15 +118,20 @@ const TaskModal: React.FC<TaskModalProps> = ({
               <input
                 type="text"
                 id="taskName"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                  taskNameError && "border-red-500"
+                }`}
                 placeholder="Enter task name"
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
               />
+              {taskNameError && (
+                <p className="text-red-500 text-xs italic">{taskNameError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block text-gray-200 text-sm font-bold mb-2"
                 htmlFor="quantity"
               >
                 Quantity
@@ -101,22 +139,29 @@ const TaskModal: React.FC<TaskModalProps> = ({
               <input
                 type="number"
                 id="quantity"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                  quantityError && "border-red-500"
+                }`}
                 placeholder="Enter quantity"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
+              {quantityError && (
+                <p className="text-red-500 text-xs italic">{quantityError}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2"
+                className="block text-gray-200 text-sm font-bold mb-2"
                 htmlFor="frequency"
               >
                 Frequency
               </label>
               <select
                 id="frequency"
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
+                  frequencyError && "border-red-500"
+                }`}
                 value={frequency}
                 onChange={(e) => setFrequency(e.target.value)}
               >
@@ -127,10 +172,13 @@ const TaskModal: React.FC<TaskModalProps> = ({
                   </option>
                 ))}
               </select>
+              {frequencyError && (
+                <p className="text-red-500 text-xs italic">{frequencyError}</p>
+              )}
               {frequency === "certain_days_of_week" && (
                 <select
                   multiple
-                  className="w-full mt-2 px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={selectedDaysOfWeek}
                   onChange={(e) =>
                     setSelectedDaysOfWeek(
@@ -152,20 +200,20 @@ const TaskModal: React.FC<TaskModalProps> = ({
               )}
             </div>
             <div className="mb-4">
-              <label className="flex items-center">
+              <label className="flex items-center text-gray-200">
                 <input
                   type="checkbox"
-                  className="form-checkbox h-5 w-5 text-blue-600"
+                  className="form-checkbox h-5 w-5 text-blue-600 "
                   checked={reminders}
                   onChange={(e) => setReminders(e.target.checked)}
                 />
-                <span className="ml-2 text-gray-700">Reminders</span>
+                <span className="ml-2 text-gray-200">Reminders</span>
               </label>
             </div>
             {reminders && (
               <div className="mb-4">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
+                  className="block text-gray-200 text-sm font-bold mb-2"
                   htmlFor="reminderTime"
                 >
                   Reminder Date/Time

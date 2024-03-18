@@ -1,16 +1,28 @@
 import axios from "axios";
-import ky from "ky";
+
+const createAuthorizedClient = (accessToken) => {
+  return axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
+    headers: {
+      Authorization: accessToken ? `${accessToken}` : "",
+      "Content-Type": "application/json",
+    },
+  });
+};
 
 let accessToken;
 if (typeof window !== "undefined") {
-  // Perform localStorage action
-  accessToken = localStorage.getItem("accessToken");
+  accessToken = JSON.parse(
+    localStorage.getItem("@accessToken") || "{}"
+  )?.accessToken;
 }
 
-export const client = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
-  headers: {
-    Authorization: accessToken && accessToken,
-    "Content-Type": "application/json", // You can add more headers if needed
-  },
-});
+// Initialize the client with the initial access token
+let client = createAuthorizedClient(accessToken);
+
+// Function to update the client with a new access token
+export const updateClientAccessToken = (newAccessToken: string) => {
+  client = createAuthorizedClient(newAccessToken);
+};
+
+export { client };
