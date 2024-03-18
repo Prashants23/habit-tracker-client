@@ -3,6 +3,7 @@ import { HTTPError } from "ky";
 import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "react-datepicker/dist/react-datepicker.css";
+import Layout from "@/components/LayoutComponent";
 const queryClient = new QueryClient({
   defaultOptions: {
     mutations: {
@@ -20,7 +21,9 @@ const queryClient = new QueryClient({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </QueryClientProvider>
   );
 }

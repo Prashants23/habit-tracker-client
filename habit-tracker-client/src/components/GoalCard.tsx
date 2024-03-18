@@ -3,8 +3,20 @@
 import moment from "moment";
 import React from "react";
 
-export default function GoalCard({ goals, onClick }) {
-  const { goalName, minTimeline, maxTimeline, completed } = goals;
+interface Goal {
+  goalName: string;
+  minTimeline: Date;
+  maxTimeline: Date;
+  completedPercentage: number;
+}
+
+interface GoalCardProps {
+  goals: Goal;
+  onClick: () => void;
+}
+
+export default function GoalCard({ goals, onClick }: GoalCardProps) {
+  const { goalName, minTimeline, maxTimeline } = goals;
   return (
     <div
       className="m-2 border text-white border-slate-200 rounded-lg hover:shadow-md hover:cursor-pointer w-[500px]"

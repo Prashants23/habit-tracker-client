@@ -1,6 +1,15 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 
+interface Task {
+  taskName: string;
+  quantity: number | string;
+  frequency: string;
+  selectedDaysOfWeek: string[];
+  reminders: boolean;
+  reminderTime: Date;
+}
+
 const frequencyOptions = [
   { value: "once_a_day", label: "Once a day" },
   { value: "twice_a_day", label: "Twice a day" },
@@ -9,23 +18,35 @@ const frequencyOptions = [
   { value: "once_a_week", label: "Once a week" },
 ];
 
-export default function TaskModal({ isOpen, onClose, onSave, task }) {
+interface TaskModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSave: (task: Task) => void;
+  task?: Task;
+}
+
+const TaskModal: React.FC<TaskModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  task,
+}) => {
   const [taskName, setTaskName] = useState(task ? task.name : "");
   const [quantity, setQuantity] = useState(task ? task.quantity : "");
   const [frequency, setFrequency] = useState(task ? task.frequency : "");
-  const [selectedDaysOfWeek, setSelectedDaysOfWeek] = useState(
+  const [selectedDaysOfWeek, setSelectedDaysOfWeek] = useState<string[]>(
     task && task.frequency === "certain_days_of_week"
       ? task.selectedDaysOfWeek
       : []
   );
-  const [reminders, setReminders] = useState(task ? task.reminders : false); // Initialize reminders as false
-  const [reminderTime, setReminderTime] = useState(
+  const [reminders, setReminders] = useState(task ? task.reminders : false);
+  const [reminderTime, setReminderTime] = useState<Date>(
     task ? task.reminderTime : new Date()
   );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const newTask = {
+    const newTask: Task = {
       taskName,
       quantity,
       frequency,
@@ -151,7 +172,7 @@ export default function TaskModal({ isOpen, onClose, onSave, task }) {
                 </label>
                 <DatePicker
                   selected={reminderTime}
-                  onChange={(date) => setReminderTime(date)}
+                  onChange={(date) => setReminderTime(date as Date)}
                   selectsEnd
                   minDate={new Date()}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -178,4 +199,6 @@ export default function TaskModal({ isOpen, onClose, onSave, task }) {
       </div>
     </div>
   );
-}
+};
+
+export default TaskModal;
